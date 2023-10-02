@@ -30,7 +30,7 @@ public class GameScreen implements Screen {
     private int dropSpeed = 200;
     private int dropVib = 10;
     private int dropleaks = 0;
-    private Texture Background;
+    final Texture Background;
 
 
     public GameScreen(final KeepItClean game) {
@@ -38,9 +38,8 @@ public class GameScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
-        String[] paths = {"blueBin.png","redBin.png"};
-//        player1 = new Player(704, 20, 64, 64, paths);
-        player1 = new Player(704, 20, 64, 64, "redBin.png");
+        String[] paths = {"blueBin.png","redBin.png","greenBin.png","yellowBin.png"};
+        player1 = new Player(704, 20, 64, 64, paths);
 
         dropImage = new Texture(Gdx.files.internal("banana.png"));
         raindrops = new Array<Rectangle>();
@@ -71,8 +70,18 @@ public class GameScreen implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
-//        if(Gdx.input.isKeyPressed(Input.Keys.NUM_1) )
-//            player1.setColor(1);
+        if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+            player1.setTexture(1); // Change to the redBin.png texture (index 0)
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            player1.setTexture(0); // Change to the redBin.png texture (index 0)
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            player1.setTexture(2); // Change to the redBin.png texture (index 0)
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+            player1.setTexture(3); // Change to the redBin.png texture (index 0)
+        }
 
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) )
