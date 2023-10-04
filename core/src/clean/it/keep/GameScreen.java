@@ -22,15 +22,19 @@ public class GameScreen implements Screen {
     private Sound dropSound;
     private Music rainMusic;
     private Player player1;
-    private Array<Rectangle> raindrops;
+    private Array<Rectangle> trashDrops;
+    private Array<String> raindropPaths;
     private long lastDropTime;
     private int player1Score = 0;
-    private int player1Speed = 300;
+    private int player1Speed = 600;
     private int spawnDiff = 500000000;
     private int dropSpeed = 200;
     private int dropVib = 10;
     private int dropleaks = 0;
     final Texture Background;
+    private String[] trashPaths = {"banana.png","battery.png","glass-bottle.png","plastic-bag.png"};
+
+
 
 
     public GameScreen(final KeepItClean game) {
@@ -42,7 +46,7 @@ public class GameScreen implements Screen {
         player1 = new Player(704, 20, 64, 64, paths);
 
         dropImage = new Texture(Gdx.files.internal("banana.png"));
-        raindrops = new Array<Rectangle>();
+        trashDrops = new Array<Rectangle>();
         spawnRaindrop();
 
         dropSound = Gdx.audio.newSound(Gdx.files.internal("garbageSoundEffect.wav"));
@@ -53,15 +57,18 @@ public class GameScreen implements Screen {
         rainMusic.setLooping(true);
     }
 
+
     private void spawnRaindrop() {
         Rectangle raindrop = new Rectangle();
         raindrop.x = MathUtils.random(0, 800-64);
         raindrop.y = 480;
         raindrop.width = 64;
         raindrop.height = 64;
-        raindrops.add(raindrop);
+        trashDrops.add(raindrop);
         lastDropTime = TimeUtils.nanoTime();
     }
+
+
 
     @Override
     public void render (float delta) {
@@ -71,16 +78,16 @@ public class GameScreen implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
-            player1.setTexture(1); // Change to the redBin.png texture (index 0)
+            player1.setTexture(1); // Change to the redBin.png texture (index 1)
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             player1.setTexture(0); // Change to the redBin.png texture (index 0)
         }
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            player1.setTexture(2); // Change to the redBin.png texture (index 0)
+            player1.setTexture(2); // Change to the redBin.png texture (index 2)
         }
         if (Gdx.input.isKeyPressed(Input.Keys.R)) {
-            player1.setTexture(3); // Change to the redBin.png texture (index 0)
+            player1.setTexture(3); // Change to the redBin.png texture (index 3)
         }
 
 
@@ -105,34 +112,14 @@ public class GameScreen implements Screen {
         if(TimeUtils.nanoTime() - lastDropTime > spawnDiff)
             spawnRaindrop();
 
-        for (Iterator<Rectangle> iter = raindrops.iterator(); iter.hasNext(); ) {
+        for (Iterator<Rectangle> iter = trashDrops.iterator(); iter.hasNext(); ) {
             Rectangle raindrop = iter.next();
             raindrop.y -= dropSpeed * Gdx.graphics.getDeltaTime();
             raindrop.x += MathUtils.random(-dropVib, dropVib) * Gdx.graphics.getDeltaTime();
             if(raindrop.y + 64 < 0) {
                 dropleaks++;
-                // more chaotic (more drops + faster + more vibration) --> every 6 drops leaked
-                if (dropleaks % 6 == 0) {
-                    if (dropSpeed > 20) {
-                        dropSpeed += 60;
-                    }
-                    if (dropVib < 500) {
-                        dropVib *= 5;
-                    }
-                    spawnDiff /= 2;
-                }
-                // reset to init state --> every 11 drops gathered
-                if ((player1Score ) % 11 == 0) {
-                    dropSpeed = 200;
-                    dropVib = 10;
-                    spawnDiff = 500000000;
-                }
                 iter.remove();
             }
-
-            // player --> speed up when gathering 5 drops
-            // other player --> slower
-
             if(raindrop.overlaps(player1.getRectangle())) {
                 dropSound.play();
                 player1Score++;
@@ -143,13 +130,16 @@ public class GameScreen implements Screen {
             }
         }
 
+
+
         ScreenUtils.clear(0, 0, 0.3f, 1);
         camera.update();
 
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
+
         game.batch.draw(Background,0,0);
-        for(Rectangle raindrop: raindrops) {
+        for(Rectangle raindrop: trashDrops) {
             game.batch.draw(dropImage, raindrop.x, raindrop.y);
         }
         game.batch.draw(player1.getTexture(), player1.getRectangle().x, player1.getRectangle().y);
