@@ -16,6 +16,7 @@ public class MainMenuScreen implements Screen {
     private Texture yellowBin;
     private Texture greenBin;
     private Texture blueBin;
+    private Texture howTo;
 
     public MainMenuScreen(final KeepItClean game) {
         this.game = game;
@@ -23,7 +24,7 @@ public class MainMenuScreen implements Screen {
         blueBin = new Texture(Gdx.files.internal("blueBin.png"));
         greenBin = new Texture(Gdx.files.internal("greenBin.png"));
         yellowBin = new Texture(Gdx.files.internal("yellowBin.png"));
-
+        howTo = new Texture(Gdx.files.internal("howTo.jpg"));
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
     }
@@ -40,10 +41,10 @@ public class MainMenuScreen implements Screen {
         game.batch.draw(yellowBin,350,300);
         game.batch.draw(greenBin,425,300);
         game.batch.draw(blueBin,500,300);
+        game.batch.draw(howTo,0,0);
         game.font.draw(game.batch, "Welcome to Keep It CLean!!! ", 335, 250);
         game.font.draw(game.batch, "Press [Spacebar] or Tap anywhere to begin!", 265, 210);
         game.font.draw(game.batch, "using Arrow keys to control", 335, 180);
-        // tutorial
         game.batch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isTouched()) {
